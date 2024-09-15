@@ -1,0 +1,102 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum TaskStatus {
+  PENDING
+  COMPLETED
+  PAUSED
+  CANCELED
+}
+
+enum InviteStatus {
+  PENDING
+  ACCEPTED
+  REJECTED
+}
+
+model User {
+  id        String   @id @default(uuid())
+  name      String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
+
+  createdProjects Project[] @relation(name: "creator")
+  memberProjects  Project[] @relation(name: "members")
+
+  sentInvites     Invite[] @relation(name: "sender")
+  receivedInvites Invite[] @relation(name: "recipient")
+}
+
+model Project {
+  id          String   @id @default(uuid())
+  title       String
+  description String?
+  iconUrl     String?
+  createdAt   DateTime @default(now())
+
+  creator   User   @relation(name: "creator", fields: [creatorId], references: [id])
+  creatorId String
+
+  members User[] @relation(name: "members")
+
+  invites Invite[]
+
+  desks Desk[]
+  
+  @@unique([title, creatorId])
+}
+
+model Desk {
+  id        String   @id @default(uuid())
+  title     String   
+  color     String?
+  createdAt DateTime @default(now())
+
+  projectId String
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  tasks     Task[]
+
+  @@unique([title, projectId]) 
+}
+
+model Task {
+  id          String     @id @default(uuid())
+  title       String     
+  description String?
+  status      TaskStatus @default(PAUSED)
+  createdAt   DateTime   @default(now())
+  orderId     Int
+
+  deskId String
+  desk   Desk   @relation(fields: [deskId], references: [id], onDelete: Cascade)
+
+  @@unique([title, deskId]) 
+}
+
+model Invite {
+  id String @id @default(uuid())
+
+  status InviteStatus @default(PENDING)
+
+  sender      User   @relation(name: "sender", fields: [senderId], references: [id], onDelete: Cascade)
+  senderId    String
+  
+  recipient   User   @relation(name: "recipient", fields: [recipientId], references: [id], onDelete: Cascade)
+  recipientId String
+
+  project   Project @relation(fields: [projectId], references: [id], onDelete: Cascade)
+  projectId String
+}
