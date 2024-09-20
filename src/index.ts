@@ -12,9 +12,23 @@ import cookieParser from "cookie-parser";
 
 const port = process.env.PORT || 5000;
 
+const allowedOrigins = ["http://localhost:3000", "https://mateeria.ru"];
+
 const app = Express();
 app.use(Express.json());
-app.use(cors());
+app.use(
+  cors({
+    origin: function (origin, callback) {
+      if (!origin || allowedOrigins.indexOf(origin) !== -1) {
+        callback(null, true);
+      } else {
+        callback(new Error("Not allowed by CORS"));
+      }
+    },
+    methods: "GET,POST,PUT,DELETE", // Allowed methods
+    credentials: true, // Allow cookies if needed
+  })
+);
 
 const apiRouter = Router();
 
