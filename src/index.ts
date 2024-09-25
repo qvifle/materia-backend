@@ -10,7 +10,7 @@ import auth from "./middlewares/auth.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
 
-const port = process.env.PORT || 5000;
+const port = process.env.PORT || 8080;
 
 const allowedOrigins = ["http://localhost:3000", "https://mateeria.ru"];
 
@@ -25,7 +25,7 @@ app.use(
         callback(new Error("Not allowed by CORS"));
       }
     },
-    methods: "GET,POST,PUT,DELETE", // Allowed methods
+    methods: "GET,POST,PUT,DELETE,PATCH", // Allowed methods
     credentials: true, // Allow cookies if needed
   })
 );
