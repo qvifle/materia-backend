@@ -328,6 +328,20 @@ router.delete("/:taskId", async (req, res) => {
       return;
     }
 
+    await prisma.task.updateMany({
+      where: {
+        deskId: task.deskId,
+        orderId: {
+          gt: task.orderId,
+        },
+      },
+      data: {
+        orderId: {
+          decrement: 1,
+        },
+      },
+    });
+
     const deletedTask = await prisma.task.delete({ where: { id: taskId } });
     res.json(deletedTask).status(202);
   } catch (err) {
