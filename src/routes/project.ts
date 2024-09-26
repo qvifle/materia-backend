@@ -74,7 +74,7 @@ router.post("/", async (req, res) => {
     const userId = req.body.jwtData.id;
     const { title, description, iconUrl } = req.body;
     if (!title) {
-      res.status(401).send("Title is required field");
+      res.status(400).send("Title is required field");
       return;
     }
 

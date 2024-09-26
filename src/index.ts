@@ -9,8 +9,9 @@ import invite from "./routes/invite.js";
 import auth from "./middlewares/auth.js";
 import cors from "cors";
 import cookieParser from "cookie-parser";
+import refreshTokenRouter from "./routes/refreshToken.js";
 
-const port = process.env.PORT || 8080;
+const port = process.env.PORT;
 
 const allowedOrigins = ["http://localhost:3000", "https://mateeria.ru"];
 
@@ -32,21 +33,10 @@ app.use(
 
 const apiRouter = Router();
 
-// app.use((req, res, next) => {
-//   res.setHeader("Access-Control-Allow-Origin", "http://localhost:3000");
-//   res.setHeader("Access-Control-Allow-Headers", "Content-Type");
-//   res.setHeader("Access-Control-Allow-Credentials", "true");
-//   next();
-// });
-
 apiRouter.use(cookieParser());
 apiRouter.use("/signUp", signUpRouter);
 apiRouter.use("/signIn", signInRouter);
-
-apiRouter.get("/ping", (req, res) => {
-  console.log(req);
-  res.json("pong").status(200);
-});
+apiRouter.use("/refresh", refreshTokenRouter);
 
 apiRouter.use(auth);
 

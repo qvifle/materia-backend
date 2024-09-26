@@ -1,7 +1,7 @@
 import { PrismaClient } from "@prisma/client";
 import { compare } from "bcrypt";
 import { Router } from "express";
-import getAccessToken from "../utils/helpers/getAccessToken.js";
+import generateTokens from "../utils/helpers/generateTokens.js";
 
 const domain = process.env.DOMAIN;
 const signInRouter = Router();
@@ -30,7 +30,7 @@ signInRouter.post("/", async (req, res) => {
       return res.status(401).send("Password doesnt match");
     }
 
-    const accesToken = getAccessToken({
+    const { accessToken, refreshToken } = generateTokens({
       id: existedUser.id,
       name: existedUser.name,
       email: existedUser.email,
@@ -38,14 +38,18 @@ signInRouter.post("/", async (req, res) => {
 
     const { id, password: existedUserPassword, ...userData } = existedUser;
 
-    res
-      .cookie("accessToken", accesToken, {
-        maxAge: 1 * 24 * 60 * 60 * 1000,
-        path: "/",
-        domain: domain, //replace
-      })
-      .status(200)
-      .json(userData);
+    res.cookie("accessToken", accessToken, {
+      httpOnly: true,
+      path: "/",
+      domain: domain,
+    });
+
+    res.cookie("refreshToken", refreshToken, {
+      httpOnly: true,
+      path: "/",
+      domain: domain,
+    });
+    res.status(200).json(userData);
   } catch (err) {
     res.status(500).send("Something went wrong");
     throw err;

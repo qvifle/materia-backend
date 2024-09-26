@@ -1,7 +1,6 @@
 import { PrismaClient } from "@prisma/client";
 import { Router } from "express";
 import hashPassword from "../utils/helpers/hashPassword.js";
-import getAccessToken from "../utils/helpers/getAccessToken.js";
 
 const prisma = new PrismaClient();
 const signUpRouter = Router();
@@ -38,14 +37,7 @@ signUpRouter.post("/", async (req, res) => {
       return res.status(500).send("Error while creating user");
     }
 
-    const accesToken = getAccessToken({
-      name,
-      email,
-      id: newUser.id,
-    });
-
     res
-      .cookie("accesToken", accesToken, { httpOnly: true })
       .status(201)
       .send("New User successfully created");
   } catch (err) {
