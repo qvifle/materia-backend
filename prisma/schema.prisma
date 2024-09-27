@@ -20,6 +20,13 @@ enum TaskStatus {
   CANCELED
 }
 
+enum TaskPriority {
+  LOW
+  MEDIUM
+  HIGH
+  CRITICAL
+}
+
 enum InviteStatus {
   PENDING
   ACCEPTED
@@ -77,6 +84,7 @@ model Task {
   title       String     
   description String?
   status      TaskStatus @default(PAUSED)
+  priority    TaskPriority @default(LOW)
   createdAt   DateTime   @default(now())
   orderId     Int
 

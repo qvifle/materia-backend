@@ -117,6 +117,30 @@ router.patch("/status/:taskId", async (req, res) => {
   }
 });
 
+router.patch("/priority/:taskId", async (req, res) => {
+  try {
+    const taskId = req.params.taskId;
+    const task = await prisma.task.findFirst({ where: { id: taskId } });
+
+    if (!task) {
+      res.send("Task not found").status(404);
+      return;
+    }
+
+    const { priority } = req.body;
+
+    const patchedTask = await prisma.task.update({
+      where: { id: taskId },
+      data: { priority },
+    });
+
+    res.json(patchedTask).status(200);
+  } catch (err) {
+    console.error(err);
+    res.status(500).send("Something went wrong");
+  }
+});
+
 // change order id
 router.patch("/order/:taskId", async (req, res) => {
   try {
