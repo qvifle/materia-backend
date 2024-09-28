@@ -13,13 +13,6 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
-enum TaskStatus {
-  PENDING
-  COMPLETED
-  PAUSED
-  CANCELED
-}
-
 enum TaskPriority {
   LOW
   MEDIUM
@@ -83,7 +76,6 @@ model Task {
   id          String     @id @default(uuid())
   title       String     
   description String?
-  status      TaskStatus @default(PAUSED)
   priority    TaskPriority @default(LOW)
   createdAt   DateTime   @default(now())
   orderId     Int

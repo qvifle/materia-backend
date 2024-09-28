@@ -92,31 +92,6 @@ router.put("/:taskId", async (req, res) => {
   }
 });
 
-// Change status by task id
-router.patch("/status/:taskId", async (req, res) => {
-  try {
-    const taskId = req.params.taskId;
-    const task = await prisma.task.findFirst({ where: { id: taskId } });
-
-    if (!task) {
-      res.send("Task not found").status(404);
-      return;
-    }
-
-    const { status } = req.body;
-
-    const patchedTask = await prisma.task.update({
-      where: { id: taskId },
-      data: { status },
-    });
-
-    res.json(patchedTask).status(200);
-  } catch (err) {
-    console.error(err);
-    res.status(500).send("Something went wrong");
-  }
-});
-
 router.patch("/priority/:taskId", async (req, res) => {
   try {
     const taskId = req.params.taskId;
